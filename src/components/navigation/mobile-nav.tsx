@@ -1,43 +1,54 @@
 'use client'
 
+import { useState } from 'react'
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
-import { cn } from '@/lib/utils'
-import { Separator } from '@/components/ui/separator'
+import { Menu } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import {
+  Sheet,
+  SheetContent,
+  SheetTrigger,
+  SheetClose,
+} from '@/components/ui/sheet'
 
-const navItems = [
-  { title: '홈', href: '/' },
-  { title: '로그인', href: '/login' },
-]
+/**
+ * Mobile navigation for blog header
+ */
+export function MobileNav() {
+  const [open, setOpen] = useState(false)
 
-interface MobileNavProps {
-  onClose: () => void
-}
-
-export function MobileNav({ onClose }: MobileNavProps) {
-  const pathname = usePathname()
+  const navItems = [
+    { label: 'Home', href: '/' },
+    { label: 'Blog', href: '/#blog' },
+    { label: 'About', href: '#about' },
+  ]
 
   return (
-    <div className="flex flex-col space-y-3 pt-6">
-      <div className="px-2">
-        <h2 className="mb-2 px-2 text-lg font-semibold">메뉴</h2>
-        <Separator className="mb-4" />
-        <div className="space-y-1">
+    <Sheet open={open} onOpenChange={setOpen}>
+      <SheetTrigger asChild>
+        <Button
+          variant="ghost"
+          className="md:hidden"
+          size="icon"
+          aria-label="Toggle menu"
+        >
+          <Menu className="h-5 w-5" />
+        </Button>
+      </SheetTrigger>
+      <SheetContent side="left">
+        <nav className="flex flex-col gap-4">
           {navItems.map(item => (
-            <Link
-              key={item.href}
-              href={item.href}
-              onClick={onClose}
-              className={cn(
-                'hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground block rounded-md px-2 py-1.5 text-sm leading-none font-medium no-underline transition-colors outline-none select-none',
-                pathname === item.href ? 'bg-accent text-accent-foreground' : ''
-              )}
-            >
-              {item.title}
-            </Link>
+            <SheetClose key={item.href} asChild>
+              <Link
+                href={item.href}
+                className="hover:text-primary text-sm font-medium transition-colors"
+              >
+                {item.label}
+              </Link>
+            </SheetClose>
           ))}
-        </div>
-      </div>
-    </div>
+        </nav>
+      </SheetContent>
+    </Sheet>
   )
 }

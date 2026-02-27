@@ -1,3 +1,5 @@
+import Link from 'next/link'
+import type { Metadata } from 'next'
 import { Container } from '@/components/layout/container'
 import { Footer } from '@/components/layout/footer'
 import { Header } from '@/components/layout/header'
@@ -7,21 +9,37 @@ import { SearchBar } from '@/components/blog/search-bar'
 import { Pagination } from '@/components/blog/pagination'
 import { fetchPosts, fetchCategories } from '@/lib/notion/posts'
 
-interface HomePageProps {
+interface CategoryPageProps {
+  params: Promise<{
+    category: string
+  }>
   searchParams: Promise<{
-    category?: string
-    search?: string
     page?: string
+    search?: string
   }>
 }
 
 const POSTS_PER_PAGE = 10
 
-export default async function Home({ searchParams }: HomePageProps) {
-  const params = await searchParams
-  const category = params.category || undefined
-  const search = params.search || undefined
-  const page = parseInt(params.page || '1', 10)
+export async function generateMetadata({
+  params,
+}: CategoryPageProps): Promise<Metadata> {
+  const { category } = await params
+  return {
+    title: `Posts in ${category}`,
+    description: `Browse all posts in the ${category} category`,
+  }
+}
+
+export default async function CategoryPage({
+  params,
+  searchParams,
+}: CategoryPageProps) {
+  const { category } = await params
+  const searchParamsResolved = await searchParams
+
+  const page = parseInt(searchParamsResolved.page || '1', 10)
+  const search = searchParamsResolved.search || undefined
 
   const [posts, categories] = await Promise.all([
     fetchPosts(category),
@@ -53,13 +71,22 @@ export default async function Home({ searchParams }: HomePageProps) {
       <main className="flex-1">
         <Container>
           <section className="py-12 md:py-16">
-            {/* Hero */}
+            {/* Breadcrumb */}
+            <div className="text-muted-foreground mb-6 flex items-center gap-2 text-sm">
+              <Link href="/" className="hover:text-primary">
+                Home
+              </Link>
+              <span>/</span>
+              <span className="text-foreground">{category}</span>
+            </div>
+
+            {/* Header */}
             <div className="mb-12 space-y-4">
               <h1 className="text-4xl font-bold tracking-tight">
-                Welcome to My Dev Blog
+                Category: {category}
               </h1>
               <p className="text-muted-foreground text-lg">
-                Thoughts on software development, technology, and code.
+                Showing {filteredPosts.length} posts in this category
               </p>
             </div>
 
@@ -74,7 +101,7 @@ export default async function Home({ searchParams }: HomePageProps) {
             </div>
 
             {/* Posts Grid */}
-            <div id="blog" className="mb-8 space-y-4">
+            <div className="mb-8 space-y-4">
               {paginatedPosts.length > 0 ? (
                 <div className="grid gap-6 md:grid-cols-2">
                   {paginatedPosts.map(post => (
@@ -84,7 +111,7 @@ export default async function Home({ searchParams }: HomePageProps) {
               ) : (
                 <div className="rounded-lg border border-dashed p-8 text-center">
                   <p className="text-muted-foreground">
-                    No posts found. Please try a different search or filter.
+                    No posts found in this category.
                   </p>
                 </div>
               )}

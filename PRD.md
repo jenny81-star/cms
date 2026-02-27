@@ -1,4 +1,5 @@
 # Product Requirements Document (PRD)
+
 ## Personal Developer Blog (개인 개발 블로그)
 
 **Document Version:** 1.0
@@ -11,17 +12,20 @@
 ## 1. Core Information
 
 ### 1.1 Project Overview
+
 **Project Name:** 개인 개발 블로그 (Personal Developer Blog)
 
 **Purpose:** A lightweight, Notion-based personal tech blog platform that enables developers to write and publish blog posts directly from Notion, with automatic synchronization to a Next.js web application. The blog prioritizes ease of content management, minimal setup overhead, and professional presentation.
 
 **Target Users:**
+
 - Software developers (junior to senior level)
 - Tech content creators
 - Developers seeking a minimalist blogging solution
 - Technical writers with Notion familiarity
 
 **Success Metrics:**
+
 - Blog loads in < 2 seconds
 - Posts sync from Notion within 60 seconds
 - Mobile responsiveness on all devices
@@ -30,6 +34,7 @@
 ### 1.2 Project Scope
 
 **MVP Scope:**
+
 - Notion API integration for content fetching
 - Posts list and detail pages
 - Category-based filtering
@@ -38,6 +43,7 @@
 - Basic styling with Tailwind CSS and shadcn/ui
 
 **Out of Scope (Future Phases):**
+
 - User authentication/comments system
 - Advanced analytics
 - Social sharing optimization
@@ -48,6 +54,7 @@
 - Blog post versioning
 
 ### 1.3 Key Constraints
+
 - **CMS Dependency:** Content management strictly through Notion
 - **Static Generation:** Assumes Next.js SSG/ISR for optimal performance
 - **Manual Trigger:** Initial sync requires manual API call (no webhook automation in MVP)
@@ -85,11 +92,13 @@
 ### 2.2 Alternative Flows
 
 **Flow 2: Browse by Category**
+
 - User clicks category link/filter
 - See posts filtered by selected category
 - Same detail page flow as primary
 
 **Flow 3: Search for Posts**
+
 - User enters search term in search bar
 - See filtered results by title/tags
 - Click to view post detail
@@ -100,22 +109,23 @@
 
 ### 3.1 Feature List
 
-| ID | Feature | Description | Priority | Status |
-|---|---------|-------------|----------|--------|
-| F001 | Notion Integration | Fetch posts from Notion database via API | Critical | MVP |
-| F002 | Posts List Display | Show all published posts with metadata | Critical | MVP |
-| F003 | Category Filtering | Filter posts by category | High | MVP |
-| F004 | Search Functionality | Search posts by title and tags | High | MVP |
-| F005 | Post Detail View | Display full post content with formatting | Critical | MVP |
-| F006 | Related Posts | Show 3-5 related posts by category | Medium | MVP |
-| F007 | Responsive Design | Mobile, tablet, desktop optimization | Critical | MVP |
-| F008 | Tags Display | Show post tags with hover tooltips | Medium | MVP |
-| F009 | Pagination | Paginate post list (10 posts per page) | Medium | MVP |
-| F010 | 404 Page | Handle non-existent post URLs | Low | MVP |
+| ID   | Feature              | Description                               | Priority | Status |
+| ---- | -------------------- | ----------------------------------------- | -------- | ------ |
+| F001 | Notion Integration   | Fetch posts from Notion database via API  | Critical | MVP    |
+| F002 | Posts List Display   | Show all published posts with metadata    | Critical | MVP    |
+| F003 | Category Filtering   | Filter posts by category                  | High     | MVP    |
+| F004 | Search Functionality | Search posts by title and tags            | High     | MVP    |
+| F005 | Post Detail View     | Display full post content with formatting | Critical | MVP    |
+| F006 | Related Posts        | Show 3-5 related posts by category        | Medium   | MVP    |
+| F007 | Responsive Design    | Mobile, tablet, desktop optimization      | Critical | MVP    |
+| F008 | Tags Display         | Show post tags with hover tooltips        | Medium   | MVP    |
+| F009 | Pagination           | Paginate post list (10 posts per page)    | Medium   | MVP    |
+| F010 | 404 Page             | Handle non-existent post URLs             | Low      | MVP    |
 
 ### 3.2 Feature Descriptions
 
 #### F001: Notion Integration
+
 - **Description:** Server-side integration with Notion API to fetch published blog posts
 - **Requirements:**
   - Authenticate with Notion API using integration token
@@ -128,6 +138,7 @@
 - **Dependencies:** @notionhq/client library
 
 #### F002: Posts List Display
+
 - **Description:** Home page showing all published posts in card format
 - **Requirements:**
   - Display posts in reverse chronological order (newest first)
@@ -140,6 +151,7 @@
 - **Dependencies:** F001, F007, F009
 
 #### F003: Category Filtering
+
 - **Description:** Filter posts by category selection
 - **Requirements:**
   - Extract all unique categories from Notion posts
@@ -153,6 +165,7 @@
 - **Dependencies:** F001, F002
 
 #### F004: Search Functionality
+
 - **Description:** Client-side search across post titles and tags
 - **Requirements:**
   - Search input field on home page
@@ -166,6 +179,7 @@
 - **Dependencies:** F001, F002
 
 #### F005: Post Detail View
+
 - **Description:** Full post content page with metadata
 - **Requirements:**
   - Display post title, publish date, category, tags
@@ -179,6 +193,7 @@
 - **Dependencies:** F001, F006
 
 #### F006: Related Posts
+
 - **Description:** Show 3-5 related posts based on category
 - **Requirements:**
   - Display below post content
@@ -191,6 +206,7 @@
 - **Dependencies:** F001, F005
 
 #### F007: Responsive Design
+
 - **Description:** Optimize layout for all device sizes
 - **Requirements:**
   - Mobile (320px - 640px): Single column, touch-friendly
@@ -204,6 +220,7 @@
 - **Dependencies:** Tailwind CSS v4
 
 #### F008: Tags Display
+
 - **Description:** Display and manage post tags
 - **Requirements:**
   - Show tags below post title on detail page
@@ -216,6 +233,7 @@
 - **Dependencies:** F001
 
 #### F009: Pagination
+
 - **Description:** Paginate post list to improve performance
 - **Requirements:**
   - Display 10 posts per page
@@ -229,6 +247,7 @@
 - **Dependencies:** F002
 
 #### F010: 404 Page
+
 - **Description:** Handle and display page not found errors
 - **Requirements:**
   - Custom 404 page design
@@ -268,16 +287,17 @@ Root
 
 ### 4.2 Navigation Items
 
-| Page Name | Navigation Label | Visibility | Role |
-|-----------|------------------|-----------|------|
-| Home | Home / Logo | Always | Primary entry point |
-| Category | Category Page | Dynamic | Category-specific view |
-| Post Detail | Post Title | Breadcrumb | Current viewing context |
-| 404 | Error Page | Conditional | Error state |
+| Page Name   | Navigation Label | Visibility  | Role                    |
+| ----------- | ---------------- | ----------- | ----------------------- |
+| Home        | Home / Logo      | Always      | Primary entry point     |
+| Category    | Category Page    | Dynamic     | Category-specific view  |
+| Post Detail | Post Title       | Breadcrumb  | Current viewing context |
+| 404         | Error Page       | Conditional | Error state             |
 
 ### 4.3 User Navigation Flows
 
 **Main Navigation:**
+
 - Logo/Home link: Always returns to home page
 - Category filter: Available on home page
 - Search: Available on home page and category page
@@ -293,6 +313,7 @@ Root
 **Purpose:** Landing page showing recent blog posts with filtering and search options
 
 **Components:**
+
 - Header with logo/site title
 - Search bar (F004)
 - Category filter buttons (F003)
@@ -303,6 +324,7 @@ Root
 - Footer with links
 
 **Wireframe Structure:**
+
 ```
 ┌─────────────────────────────────┐
 │  LOGO    Personal Dev Blog      │
@@ -320,6 +342,7 @@ Root
 ```
 
 **Interactions:**
+
 - Click post card → Post Detail page
 - Click category → Category page with filter
 - Type in search → Filter posts in real-time
@@ -327,6 +350,7 @@ Root
 - Click category badge on post → Category page
 
 **Responsive Behavior:**
+
 - Desktop: 2-3 column grid
 - Tablet: 2 column grid
 - Mobile: 1 column list
@@ -340,6 +364,7 @@ Root
 **Purpose:** Display posts filtered by specific category
 
 **Components:**
+
 - Header with category name
 - Search bar (optional)
 - Posts list filtered by category (F003)
@@ -348,6 +373,7 @@ Root
 - Breadcrumb: Home > [Category]
 
 **Wireframe Structure:**
+
 ```
 ┌─────────────────────────────────┐
 │  LOGO    Personal Dev Blog      │
@@ -367,6 +393,7 @@ Root
 ```
 
 **Interactions:**
+
 - Click post card → Post Detail page
 - Pagination same as home page
 - Breadcrumb links back to home
@@ -382,6 +409,7 @@ Root
 **Purpose:** Display full blog post content with metadata and related posts
 
 **Components:**
+
 - Header with post metadata:
   - Post title (H1)
   - Publication date
@@ -398,6 +426,7 @@ Root
 - Back to posts link
 
 **Wireframe Structure:**
+
 ```
 ┌─────────────────────────────────┐
 │  LOGO    Personal Dev Blog      │
@@ -425,6 +454,7 @@ Root
 ```
 
 **Interactions:**
+
 - Click tag → Filter posts by tag (future feature)
 - Click related post card → Navigate to that post
 - Breadcrumb links → Navigate to home or category
@@ -441,12 +471,14 @@ Root
 **Purpose:** Display when user navigates to non-existent post or page
 
 **Components:**
+
 - Error heading "404 - Page Not Found"
 - Error message explaining issue
 - Link back to home page
 - List of popular posts (optional)
 
 **Wireframe Structure:**
+
 ```
 ┌─────────────────────────────────┐
 │  LOGO    Personal Dev Blog      │
@@ -482,18 +514,19 @@ Root
 
 **Properties:**
 
-| Property Name | Type | Description | Example |
-|---------------|------|-------------|---------|
-| Title | Title | Post title | "Getting Started with Next.js 15" |
-| Category | Select | Post category | "Web Development" |
-| Tags | Multi-select | Post tags | ["Next.js", "React", "Tutorial"] |
-| Published | Date | Publication date | 2026-02-25 |
-| Status | Select | Post status | "Published" / "Draft" |
-| Content | Page content | Post body (Notion blocks) | [Notion blocks] |
-| Excerpt | Rich text | Short summary (optional) | "Learn how to build..." |
-| Author | Text | Post author (optional) | "John Doe" |
+| Property Name | Type         | Description               | Example                           |
+| ------------- | ------------ | ------------------------- | --------------------------------- |
+| Title         | Title        | Post title                | "Getting Started with Next.js 15" |
+| Category      | Select       | Post category             | "Web Development"                 |
+| Tags          | Multi-select | Post tags                 | ["Next.js", "React", "Tutorial"]  |
+| Published     | Date         | Publication date          | 2026-02-25                        |
+| Status        | Select       | Post status               | "Published" / "Draft"             |
+| Content       | Page content | Post body (Notion blocks) | [Notion blocks]                   |
+| Excerpt       | Rich text    | Short summary (optional)  | "Learn how to build..."           |
+| Author        | Text         | Post author (optional)    | "John Doe"                        |
 
 **Database View:**
+
 - Filter: Status = "Published"
 - Sort: Published date (descending)
 - Show properties: Title, Category, Published, Status
@@ -501,55 +534,68 @@ Root
 ### 6.2 Application Data Model
 
 **Post Object (Frontend):**
+
 ```typescript
 interface Post {
-  id: string;                    // Notion page ID
-  title: string;
-  slug: string;                  // URL-friendly title
-  category: string;
-  tags: string[];
-  publishedDate: Date;
-  excerpt: string;
-  content: NotionBlock[];        // Rendered Notion blocks
-  author?: string;
-  createdAt: Date;
-  updatedAt: Date;
+  id: string // Notion page ID
+  title: string
+  slug: string // URL-friendly title
+  category: string
+  tags: string[]
+  publishedDate: Date
+  excerpt: string
+  content: NotionBlock[] // Rendered Notion blocks
+  author?: string
+  createdAt: Date
+  updatedAt: Date
 }
 ```
 
 **NotionBlock Object:**
+
 ```typescript
 interface NotionBlock {
-  id: string;
-  type: 'paragraph' | 'heading_1' | 'heading_2' | 'heading_3' | 'image' | 'code' | 'bulleted_list_item' | 'numbered_list_item' | 'quote' | 'divider';
-  content: string;
+  id: string
+  type:
+    | 'paragraph'
+    | 'heading_1'
+    | 'heading_2'
+    | 'heading_3'
+    | 'image'
+    | 'code'
+    | 'bulleted_list_item'
+    | 'numbered_list_item'
+    | 'quote'
+    | 'divider'
+  content: string
   metadata?: {
-    language?: string;           // for code blocks
-    alt?: string;               // for images
-  };
-  children?: NotionBlock[];
+    language?: string // for code blocks
+    alt?: string // for images
+  }
+  children?: NotionBlock[]
 }
 ```
 
 **Category Object:**
+
 ```typescript
 interface Category {
-  name: string;
-  postCount: number;
-  slug: string;
+  name: string
+  postCount: number
+  slug: string
 }
 ```
 
 ### 6.3 API Endpoints (Internal)
 
-| Endpoint | Method | Purpose | Response |
-|----------|--------|---------|----------|
-| `/api/posts` | GET | Fetch all published posts | Array<Post> |
-| `/api/posts?category=[name]` | GET | Fetch posts by category | Array<Post> |
-| `/api/posts?search=[term]` | GET | Search posts | Array<Post> |
-| `/api/posts/[slug]` | GET | Fetch single post | Post |
-| `/api/categories` | GET | Fetch all categories | Array<Category> |
-| `/api/revalidate` | POST | Trigger ISR revalidation | {status: "success"} |
+| Endpoint                     | Method | Purpose                   | Response            |
+| ---------------------------- | ------ | ------------------------- | ------------------- |
+| `/api/posts`                 | GET    | Fetch all published posts | Array<Post>         |
+| `/api/posts?category=[name]` | GET    | Fetch posts by category   | Array<Post>         |
+| `/api/posts?search=[term]`   | GET    | Search posts              | Array<Post>         |
+| `/api/posts/[slug]`          | GET    | Fetch single post         | Post                |
+| `/api/categories`            | GET    | Fetch all categories      | Array<Category>     |
+| `/api/revalidate`            | POST   | Trigger ISR revalidation  | {status: "success"} |
 
 ---
 
@@ -557,18 +603,18 @@ interface Category {
 
 ### 7.1 Technology Stack
 
-| Layer | Technology | Version | Purpose |
-|-------|-----------|---------|---------|
-| **Frontend Framework** | Next.js | 15.x | React framework with SSG/ISR |
-| **Language** | TypeScript | 5.6+ | Type safety |
-| **Styling Framework** | Tailwind CSS | v4 | Utility-first CSS |
-| **UI Components** | shadcn/ui | Latest | Pre-built React components |
-| **Icons** | Lucide React | Latest | SVG icon library |
-| **CMS API Client** | @notionhq/client | Latest | Notion API SDK |
-| **Code Highlighting** | highlight.js or Prism.js | Latest | Syntax highlighting |
-| **Date Handling** | date-fns | Latest | Date utilities |
-| **Deployment** | Vercel | - | Hosting and CI/CD |
-| **Package Manager** | npm or pnpm | Latest | Dependency management |
+| Layer                  | Technology               | Version | Purpose                      |
+| ---------------------- | ------------------------ | ------- | ---------------------------- |
+| **Frontend Framework** | Next.js                  | 15.x    | React framework with SSG/ISR |
+| **Language**           | TypeScript               | 5.6+    | Type safety                  |
+| **Styling Framework**  | Tailwind CSS             | v4      | Utility-first CSS            |
+| **UI Components**      | shadcn/ui                | Latest  | Pre-built React components   |
+| **Icons**              | Lucide React             | Latest  | SVG icon library             |
+| **CMS API Client**     | @notionhq/client         | Latest  | Notion API SDK               |
+| **Code Highlighting**  | highlight.js or Prism.js | Latest  | Syntax highlighting          |
+| **Date Handling**      | date-fns                 | Latest  | Date utilities               |
+| **Deployment**         | Vercel                   | -       | Hosting and CI/CD            |
+| **Package Manager**    | npm or pnpm              | Latest  | Dependency management        |
 
 ### 7.2 Architecture Overview
 
@@ -613,21 +659,25 @@ interface Category {
 ### 7.3 Key Technical Decisions
 
 **Static Generation Strategy:**
+
 - Use Next.js SSG for home, category, and post detail pages
 - Rebuild pages on-demand using ISR (Incremental Static Regeneration)
 - Revalidate every hour or on manual trigger
 
 **Search Implementation:**
+
 - Client-side search using in-memory post data
 - Posts fetched and cached at build time
 - Lightweight JSON payload for search
 
 **Notion Block Parsing:**
+
 - Server-side parsing of Notion blocks
 - Convert to standardized internal format
 - Client renders with appropriate components
 
 **Caching Strategy:**
+
 - 1-hour cache for Notion API responses
 - ISR for next.js pages (60-second revalidation)
 - Static generation for all post pages
@@ -637,6 +687,7 @@ interface Category {
 ## 8. Development Roadmap
 
 ### Phase 1: MVP (Sprint 1-2)
+
 - [x] Project setup with Next.js 15
 - [x] Notion API integration
 - [x] Posts list page (Home)
@@ -647,6 +698,7 @@ interface Category {
 - [x] shadcn/ui component integration
 
 ### Phase 2: Enhancements (Sprint 3)
+
 - [ ] Search functionality (F004)
 - [ ] Tags display with filtering (F008)
 - [ ] Related posts section (F006)
@@ -655,6 +707,7 @@ interface Category {
 - [ ] Performance optimization
 
 ### Phase 3: Polish (Sprint 4)
+
 - [ ] SEO optimization
 - [ ] Lighthouse score > 90
 - [ ] Accessibility audit (WCAG 2.1)
@@ -722,6 +775,7 @@ interface Category {
 ### 10.1 Environment Setup
 
 **Environment Variables:**
+
 ```
 NOTION_API_KEY=your_notion_api_key
 NOTION_DATABASE_ID=your_database_id
@@ -729,6 +783,7 @@ NEXT_PUBLIC_SITE_URL=https://yourblog.com
 ```
 
 ### 10.2 Notion Setup Required
+
 1. Create Notion workspace/page
 2. Create database with structure from Section 6.1
 3. Create Notion integration
@@ -737,12 +792,14 @@ NEXT_PUBLIC_SITE_URL=https://yourblog.com
 6. Create at least 3 sample posts
 
 ### 10.3 Deployment Steps
+
 1. Fork/clone repository
 2. Set environment variables in Vercel
 3. Deploy to Vercel (automatic on git push)
 4. Test post syncing via `/api/revalidate` endpoint
 
 ### 10.4 Post Publishing Workflow
+
 1. Write post in Notion
 2. Fill in metadata: Title, Category, Tags, Date
 3. Set Status to "Published"
@@ -753,24 +810,25 @@ NEXT_PUBLIC_SITE_URL=https://yourblog.com
 
 ## 11. Glossary & Terminology
 
-| Term | Definition |
-|------|-----------|
-| **CMS** | Content Management System (Notion in this case) |
-| **SSG** | Static Site Generation - pages built at build time |
-| **ISR** | Incremental Static Regeneration - on-demand page updates |
-| **API Route** | Next.js serverless function endpoints |
-| **Block** | Notion content element (paragraph, heading, image, etc.) |
-| **Database** | Notion database containing blog posts |
-| **Property** | Database field (Title, Category, Content, etc.) |
-| **Slug** | URL-friendly version of title (e.g., "getting-started-with-nextjs") |
-| **Excerpt** | Short summary of post content (150 characters) |
-| **Revalidate** | Trigger page rebuild to fetch latest content |
+| Term           | Definition                                                          |
+| -------------- | ------------------------------------------------------------------- |
+| **CMS**        | Content Management System (Notion in this case)                     |
+| **SSG**        | Static Site Generation - pages built at build time                  |
+| **ISR**        | Incremental Static Regeneration - on-demand page updates            |
+| **API Route**  | Next.js serverless function endpoints                               |
+| **Block**      | Notion content element (paragraph, heading, image, etc.)            |
+| **Database**   | Notion database containing blog posts                               |
+| **Property**   | Database field (Title, Category, Content, etc.)                     |
+| **Slug**       | URL-friendly version of title (e.g., "getting-started-with-nextjs") |
+| **Excerpt**    | Short summary of post content (150 characters)                      |
+| **Revalidate** | Trigger page rebuild to fetch latest content                        |
 
 ---
 
 ## 12. Appendix: Success Criteria
 
 ### Functional Requirements
+
 - ✓ All blog posts are accessible via `/post/[slug]` route
 - ✓ Posts can be filtered by category
 - ✓ Posts can be searched by title and tags
@@ -779,6 +837,7 @@ NEXT_PUBLIC_SITE_URL=https://yourblog.com
 - ✓ 404 page displays for non-existent posts
 
 ### Non-Functional Requirements
+
 - ✓ Page load time < 2 seconds (LCP)
 - ✓ Blog syncs new Notion posts within 60 seconds
 - ✓ Mobile responsive (320px and up)
@@ -787,6 +846,7 @@ NEXT_PUBLIC_SITE_URL=https://yourblog.com
 - ✓ 100% uptime on Vercel
 
 ### User Experience
+
 - ✓ Intuitive navigation structure
 - ✓ Clear visual hierarchy
 - ✓ Readable typography
@@ -801,10 +861,10 @@ NEXT_PUBLIC_SITE_URL=https://yourblog.com
 
 ## Document History
 
-| Version | Date | Author | Changes |
-|---------|------|--------|---------|
-| 1.0 | 2026-02-25 | Claude Code | Initial PRD creation |
+| Version | Date       | Author      | Changes              |
+| ------- | ---------- | ----------- | -------------------- |
+| 1.0     | 2026-02-25 | Claude Code | Initial PRD creation |
 
 ---
 
-*This PRD is ready for development handoff. Developers should read sections 1-6 before starting implementation. Reference Section 9 for consistency validation across features and pages.*
+_This PRD is ready for development handoff. Developers should read sections 1-6 before starting implementation. Reference Section 9 for consistency validation across features and pages._
