@@ -102,11 +102,22 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
               </h1>
 
               <div className="text-muted-foreground flex flex-wrap items-center gap-4 text-sm">
-                <time dateTime={post.publishedDate}>
-                  {post.publishedDate
-                    ? formatDate(new Date(post.publishedDate), 'MMMM dd, yyyy')
-                    : '날짜 미정'}
-                </time>
+                <div className="flex items-center gap-4">
+                  <time dateTime={post.publishedDate}>
+                    {post.publishedDate
+                      ? formatDate(
+                          new Date(post.publishedDate),
+                          'MMMM dd, yyyy'
+                        )
+                      : '날짜 미정'}
+                  </time>
+                  {post.readingTime && (
+                    <>
+                      <span>•</span>
+                      <span>약 {post.readingTime}분 읽기</span>
+                    </>
+                  )}
+                </div>
                 {post.category && (
                   <Badge variant="outline">{post.category}</Badge>
                 )}

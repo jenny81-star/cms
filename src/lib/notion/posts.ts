@@ -3,6 +3,7 @@ import { unstable_cache } from 'next/cache'
 import type { Post, Category } from '@/lib/types/blog'
 import { env } from '@/lib/env'
 import { fetchBlocks } from './blocks'
+import { calculateReadingTime } from '@/lib/content/reading-time'
 
 /**
  * Convert title to kebab-case slug
@@ -164,6 +165,7 @@ async function fetchPostBySlugUncached(slug: string): Promise<Post | null> {
   // Fetch blocks for this post
   const blocks = await fetchBlocks(post.id)
   post.content = blocks
+  post.readingTime = calculateReadingTime(blocks)
 
   return post
 }

@@ -31,12 +31,16 @@ export function PostCard({ post }: PostCardProps) {
           <p className="text-muted-foreground line-clamp-3 text-sm">
             {post.excerpt}
           </p>
-          <div className="text-muted-foreground flex items-center justify-between text-xs">
-            <time dateTime={post.publishedDate}>
-              {post.publishedDate
-                ? formatDate(new Date(post.publishedDate), 'MMM dd, yyyy')
-                : '날짜 미정'}
-            </time>
+          <div className="text-muted-foreground flex items-center justify-between gap-2 text-xs">
+            <div className="flex items-center gap-2">
+              <time dateTime={post.publishedDate}>
+                {post.publishedDate
+                  ? formatDate(new Date(post.publishedDate), 'MMM dd, yyyy')
+                  : '날짜 미정'}
+              </time>
+              {post.readingTime && <span>•</span>}
+              {post.readingTime && <span>약 {post.readingTime}분</span>}
+            </div>
             {post.tags.length > 0 && (
               <div className="flex gap-1">
                 {post.tags.slice(0, 2).map(tag => (

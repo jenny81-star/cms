@@ -14,6 +14,7 @@ export interface Post {
   excerpt: string
   content?: NotionBlock[]
   author?: string
+  readingTime?: number
   createdAt: string
   updatedAt: string
 }
