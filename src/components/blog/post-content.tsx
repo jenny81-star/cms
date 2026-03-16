@@ -1,6 +1,7 @@
-/* eslint-disable @typescript-eslint/no-explicit-any, @next/next/no-img-element */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 
+import Image from 'next/image'
 import hljs from 'highlight.js'
 import 'highlight.js/styles/atom-one-dark.css'
 import type { NotionBlock } from '@/lib/types/notion'
@@ -24,16 +25,19 @@ export function PostContent({ blocks }: PostContentProps) {
 
   return (
     <div className="prose prose-invert dark:prose-invert max-w-none space-y-4">
-      {blocks.map(block => (
+      {blocks.map((block, index) => (
         <div key={block.id} className="space-y-2">
-          {renderBlock(block)}
+          {renderBlock(block, index === 0)}
         </div>
       ))}
     </div>
   )
 }
 
-function renderBlock(block: NotionBlock): React.ReactNode {
+function renderBlock(
+  block: NotionBlock,
+  isFirstImage = false
+): React.ReactNode {
   switch (block.type) {
     case 'paragraph': {
       const para = block as any
@@ -139,12 +143,16 @@ function renderBlock(block: NotionBlock): React.ReactNode {
 
       return (
         <figure className="space-y-2">
-          <img
-            src={imageUrl}
-            alt={caption.map((c: any) => c.plain_text).join('') || 'Image'}
-            className="w-full rounded-lg"
-            loading="lazy"
-          />
+          <div className="relative w-full" style={{ aspectRatio: '16/9' }}>
+            <Image
+              src={imageUrl}
+              alt={caption.map((c: any) => c.plain_text).join('') || 'Image'}
+              fill
+              className="rounded-lg object-cover"
+              priority={isFirstImage}
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 90vw, 80vw"
+            />
+          </div>
           {caption.length > 0 && (
             <figcaption className="text-center text-sm text-slate-500">
               {renderRichText(caption)}
