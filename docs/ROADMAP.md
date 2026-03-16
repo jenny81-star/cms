@@ -1,7 +1,7 @@
 # Project Roadmap - 개인 개발 블로그 CMS
 
-**Last Updated:** 2026-02-26
-**Status:** Phase 1 - MVP Implementation (In Progress)
+**Last Updated:** 2026-03-16
+**Status:** Phase 1 - MVP Implementation (Complete) ✅
 
 ---
 
@@ -152,13 +152,13 @@ Deployment:
 
 ### Testing & Validation
 
-- [ ] Test all pages with real Notion data
-- [ ] Verify search functionality
-- [ ] Test category filtering
-- [ ] Check pagination logic
-- [ ] Validate mobile responsiveness
-- [ ] Run `npm run check-all` successfully
-- [ ] Build and test `npm run build`
+- [x] Test all pages with real Notion data
+- [x] Verify search functionality
+- [x] Test category filtering
+- [x] Check pagination logic
+- [x] Validate mobile responsiveness
+- [x] Run `npm run check-all` successfully
+- [x] Build and test `npm run build`
 
 ### Deployment
 
@@ -218,7 +218,6 @@ npm start
 ## 🐛 Known Issues & Limitations
 
 - ISR cache revalidation is manual via `/api/revalidate` endpoint
-- Categories are currently ID-only in the database (need to enhance category name resolution)
 - Search is client-side only (no full-text search)
 - No webhook support for automatic Notion-to-blog syncing in MVP
 
