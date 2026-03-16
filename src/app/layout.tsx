@@ -18,6 +18,20 @@ export const metadata: Metadata = {
   title: '개발 블로그 - Personal Developer Blog',
   description:
     'Notion 기반의 개인 개발 블로그. 최신 기술 글과 개발 이야기를 만나보세요.',
+  openGraph: {
+    title: '개발 블로그',
+    description:
+      'Notion 기반의 개인 개발 블로그. 최신 기술 글과 개발 이야기를 만나보세요.',
+    type: 'website',
+    url: process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000',
+    siteName: '개발 블로그',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: '개발 블로그',
+    description:
+      'Notion 기반의 개인 개발 블로그. 최신 기술 글과 개발 이야기를 만나보세요.',
+  },
 }
 
 export default function RootLayout({
