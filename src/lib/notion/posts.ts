@@ -1,10 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { unstable_cache } from 'next/cache'
-import { getNotionClient } from './client'
 import type { Post, Category } from '@/lib/types/blog'
 import { env } from '@/lib/env'
-
-const client = getNotionClient()
+import { fetchBlocks } from './blocks'
 
 /**
  * Convert title to kebab-case slug
@@ -26,43 +24,67 @@ function extractText(richText: any[]): string {
 }
 
 /**
+ * Direct Notion REST API calls using fetch
+ */
+async function notionApi<T>(
+  endpoint: string,
+  options?: RequestInit
+): Promise<T> {
+  const response = await fetch(`https://api.notion.com/v1${endpoint}`, {
+    headers: {
+      Authorization: `Bearer ${env.NOTION_API_KEY}`,
+      'Notion-Version': '2022-06-28',
+      'Content-Type': 'application/json',
+    },
+    ...options,
+  })
+
+  if (!response.ok) {
+    const error = await response.json()
+    throw new Error(`Notion API failed (${response.status}): ${error.message}`)
+  }
+
+  return response.json() as Promise<T>
+}
+
+/**
  * Fetch all posts from Notion database
  */
 async function fetchPostsUncached(category?: string): Promise<Post[]> {
-  const filter = {
-    and: [
+  try {
+    if (!env.NOTION_API_KEY || !env.NOTION_DATABASE_ID) {
+      console.warn('Notion configuration not found')
+      return []
+    }
+
+    const response = await notionApi<any>(
+      `/databases/${env.NOTION_DATABASE_ID}/query`,
       {
-        property: 'Status',
-        status: {
-          equals: 'Published',
-        },
-      },
-      ...(category
-        ? [
-            {
-              property: 'Category',
-              relation: {
-                contains: category,
-              },
+        method: 'POST',
+        body: JSON.stringify({
+          filter: {
+            property: 'Status',
+            status: {
+              equals: 'Published',
             },
-          ]
-        : []),
-    ],
-  } as any
+          },
+          sorts: [
+            {
+              property: 'Published Date',
+              direction: 'descending',
+            },
+          ],
+        }),
+      }
+    )
 
-  const response = await (client.databases as any).query({
-    database_id: env.NOTION_DATABASE_ID,
-    filter: category ? filter : filter.and[0],
-    sorts: [
-      {
-        property: 'Published Date',
-        direction: 'descending',
-      },
-    ],
-  })
+    if (!response.results) {
+      return []
+    }
 
-  const posts: Post[] = response.results
-    .map((page: any) => {
+    const posts: Post[] = []
+
+    for (const page of response.results) {
       const props = page.properties
       const title = extractText(props.Title?.title || [])
       const slug = titleToSlug(title)
@@ -71,21 +93,54 @@ async function fetchPostsUncached(category?: string): Promise<Post[]> {
       const publishedDate = props['Published Date']?.date?.start || ''
       const excerpt = extractText(props.Excerpt?.rich_text || [])
 
-      return {
-        id: page.id,
-        slug,
-        title,
-        category: categoryProp[0]?.id || '',
-        tags: tagsProp.map((tag: any) => tag.name),
-        publishedDate,
-        excerpt: excerpt.substring(0, 150),
-        createdAt: page.created_time,
-        updatedAt: page.last_edited_time,
+      // Fetch category name from Notion if category relation exists
+      let categoryName = ''
+      if (categoryProp.length > 0) {
+        try {
+          const categoryPage = await notionApi<any>(
+            `/pages/${categoryProp[0].id}`
+          )
+          const categoryTitleProp =
+            categoryPage.properties?.Name?.title ||
+            categoryPage.properties?.Title?.title ||
+            []
+          categoryName = categoryTitleProp
+            .map((t: any) => t.plain_text)
+            .join('')
+            .trim()
+        } catch {
+          categoryName = ''
+        }
       }
-    })
-    .filter((post: Post) => post.slug) // Filter out invalid posts
 
-  return posts
+      if (slug) {
+        posts.push({
+          id: page.id,
+          slug,
+          title,
+          category: categoryName,
+          tags: tagsProp.map((tag: any) => tag.name),
+          publishedDate,
+          excerpt: excerpt.substring(0, 150),
+          createdAt: page.created_time,
+          updatedAt: page.last_edited_time,
+        })
+      }
+    }
+
+    // Client-side category filtering by slug
+    if (category) {
+      return posts.filter(post => {
+        const postCategorySlug = titleToSlug(post.category)
+        return postCategorySlug === category
+      })
+    }
+
+    return posts
+  } catch (error) {
+    console.error('Failed to fetch posts:', error)
+    return []
+  }
 }
 
 /**
@@ -107,15 +162,8 @@ async function fetchPostBySlugUncached(slug: string): Promise<Post | null> {
   if (!post) return null
 
   // Fetch blocks for this post
-  try {
-    const blocks = await client.blocks.children.list({
-      block_id: post.id,
-    })
-
-    post.content = blocks.results as any[]
-  } catch (error) {
-    console.error(`Failed to fetch blocks for post ${slug}:`, error)
-  }
+  const blocks = await fetchBlocks(post.id)
+  post.content = blocks
 
   return post
 }
@@ -134,16 +182,26 @@ export const fetchPostBySlug = unstable_cache(
  */
 async function fetchCategoriesUncached(): Promise<Category[]> {
   try {
+    if (!env.NOTION_API_KEY || !env.NOTION_DATABASE_ID) {
+      console.warn('Notion configuration not found')
+      return []
+    }
+
     // Query all published posts to count by category
-    const response = await (client.databases as any).query({
-      database_id: env.NOTION_DATABASE_ID,
-      filter: {
-        property: 'Status',
-        status: {
-          equals: 'Published',
-        },
-      },
-    })
+    const response = await notionApi<any>(
+      `/databases/${env.NOTION_DATABASE_ID}/query`,
+      {
+        method: 'POST',
+        body: JSON.stringify({
+          filter: {
+            property: 'Status',
+            status: {
+              equals: 'Published',
+            },
+          },
+        }),
+      }
+    )
 
     const categoryMap = new Map<string, Category>()
 
@@ -156,7 +214,8 @@ async function fetchCategoriesUncached(): Promise<Category[]> {
 
         if (!categoryMap.has(categoryId)) {
           categoryMap.set(categoryId, {
-            name: '', // Will be fetched below
+            id: categoryId,
+            name: '',
             slug: '',
             postCount: 0,
           })
@@ -167,7 +226,24 @@ async function fetchCategoriesUncached(): Promise<Category[]> {
       })
     })
 
-    // Fetch category names from relations (optional enhancement)
+    // Fetch category names from Notion
+    for (const [id, category] of categoryMap) {
+      try {
+        const page = await notionApi<any>(`/pages/${id}`)
+        const titleProp =
+          page.properties?.Name?.title || page.properties?.Title?.title || []
+        const name = titleProp
+          .map((t: any) => t.plain_text)
+          .join('')
+          .trim()
+        category.name = name || `Category ${id.slice(0, 6)}`
+        category.slug = name ? titleToSlug(name) : id.slice(0, 8)
+      } catch {
+        category.name = `Category ${id.slice(0, 6)}`
+        category.slug = id.slice(0, 8)
+      }
+    }
+
     const categories = Array.from(categoryMap.values())
 
     return categories.sort((a, b) => b.postCount - a.postCount)

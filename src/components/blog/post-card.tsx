@@ -33,7 +33,9 @@ export function PostCard({ post }: PostCardProps) {
           </p>
           <div className="text-muted-foreground flex items-center justify-between text-xs">
             <time dateTime={post.publishedDate}>
-              {formatDate(new Date(post.publishedDate), 'MMM dd, yyyy')}
+              {post.publishedDate
+                ? formatDate(new Date(post.publishedDate), 'MMM dd, yyyy')
+                : '날짜 미정'}
             </time>
             {post.tags.length > 0 && (
               <div className="flex gap-1">

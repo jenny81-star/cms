@@ -7,6 +7,7 @@
 ## 1. Project Architecture Overview
 
 ### Technology Stack
+
 - **Framework**: Next.js 15.5.3 (App Router + Turbopack)
 - **Runtime**: React 19.1.0 + TypeScript 5
 - **Styling**: TailwindCSS v4 + shadcn/ui (new-york style)
@@ -16,6 +17,7 @@
 - **Code Quality**: ESLint 9 + Prettier 3.6.2 + Husky 9 + lint-staged 16
 
 ### Core Functionality
+
 - Blog post management via Notion database
 - Server-rendered pages with ISR for blog content
 - Client-side search, filtering, and pagination
@@ -23,6 +25,7 @@
 - Category-based post browsing
 
 ### Key Directory Structure
+
 ```
 src/
 ├── app/                          # Next.js App Router pages
@@ -54,20 +57,22 @@ src/
 
 ### Server vs Client Components
 
-| Scenario | Type | Rule | Example |
-|----------|------|------|---------|
-| **Data fetching** | Server | Always use Server Components for Notion API calls | `src/app/page.tsx`, `src/lib/notion/posts.ts` |
-| **Interactivity** | Client | Use `'use client'` only for interactive features | `SearchBar`, `CategoryFilter`, `Pagination` |
-| **Layout pages** | Server | Default to Server Components | `page.tsx`, `layout.tsx` |
-| **Async operations** | Server | Never use async in Client Components | ✅ Server: `async function`, ❌ Client: must use useState/useEffect |
+| Scenario             | Type   | Rule                                              | Example                                                             |
+| -------------------- | ------ | ------------------------------------------------- | ------------------------------------------------------------------- |
+| **Data fetching**    | Server | Always use Server Components for Notion API calls | `src/app/page.tsx`, `src/lib/notion/posts.ts`                       |
+| **Interactivity**    | Client | Use `'use client'` only for interactive features  | `SearchBar`, `CategoryFilter`, `Pagination`                         |
+| **Layout pages**     | Server | Default to Server Components                      | `page.tsx`, `layout.tsx`                                            |
+| **Async operations** | Server | Never use async in Client Components              | ✅ Server: `async function`, ❌ Client: must use useState/useEffect |
 
 ### Client Component Rules
+
 - **Mark with `'use client'`** at the top of the file
 - Only client-side state management (useState, useCallback, useEffect)
 - Must accept data as props from Server Components
 - If data fetching needed: call API routes, not Notion client directly
 
 ### Server Component Rules
+
 - **Default choice** for new components
 - Direct access to Notion client and utilities
 - Use `unstable_cache` for all Notion queries
@@ -104,22 +109,24 @@ const posts = await client.databases.query(...)
 2. **src/lib/notion/posts.ts** - Update property extraction logic
 
 Example: Adding author field
+
 ```typescript
 // Step 1: Update type (blog.ts)
 export interface Post {
   // ... existing fields
-  author?: string  // NEW
+  author?: string // NEW
 }
 
 // Step 2: Update extraction (posts.ts line ~66-72)
-const author = extractText(props.Author?.rich_text || [])  // NEW
+const author = extractText(props.Author?.rich_text || []) // NEW
 return {
   // ... existing fields
-  author,  // NEW
+  author, // NEW
 }
 ```
 
 ### Property Extraction Functions
+
 - **extractText()**: For rich_text and title arrays → string
 - **titleToSlug()**: Title → kebab-case URL slug
 - Filter invalid posts: `posts.filter(post => post.slug)`
@@ -145,16 +152,17 @@ Is this a reusable UI component?
 
 ### Naming Conventions (Strict)
 
-| Type | Format | Example | Status |
-|------|--------|---------|--------|
-| Component file | kebab-case | `post-card.tsx` | ✅ REQUIRED |
+| Type           | Format     | Example                      | Status      |
+| -------------- | ---------- | ---------------------------- | ----------- |
+| Component file | kebab-case | `post-card.tsx`              | ✅ REQUIRED |
 | Component name | PascalCase | `export function PostCard()` | ✅ REQUIRED |
-| Folder | kebab-case | `src/components/blog/` | ✅ REQUIRED |
-| API route | kebab-case | `src/app/api/posts/route.ts` | ✅ REQUIRED |
-| Type file | kebab-case | `src/lib/types/blog.ts` | ✅ REQUIRED |
-| Utility file | kebab-case | `src/lib/notion/posts.ts` | ✅ REQUIRED |
+| Folder         | kebab-case | `src/components/blog/`       | ✅ REQUIRED |
+| API route      | kebab-case | `src/app/api/posts/route.ts` | ✅ REQUIRED |
+| Type file      | kebab-case | `src/lib/types/blog.ts`      | ✅ REQUIRED |
+| Utility file   | kebab-case | `src/lib/notion/posts.ts`    | ✅ REQUIRED |
 
 **PROHIBITED**:
+
 - `snake_case` file names (will fail linting)
 - `camelCase` folders or routes
 - Files > 300 lines (refactor into separate files)
@@ -169,10 +177,11 @@ import { fetchPosts } from '@/lib/notion/posts'
 import type { Post } from '@/lib/types/blog'
 
 // ❌ NEVER use relative paths
-import { Button } from '../../../components/ui/button'  // FORBIDDEN
+import { Button } from '../../../components/ui/button' // FORBIDDEN
 ```
 
 **Valid aliases** (from tsconfig.json):
+
 - `@/components` → `src/components`
 - `@/lib` → `src/lib`
 - `@/ui` → `src/components/ui`
@@ -184,13 +193,13 @@ import { Button } from '../../../components/ui/button'  // FORBIDDEN
 
 ### App Router Pages
 
-| File | Purpose | Rules |
-|------|---------|-------|
-| `page.tsx` | Route page | Use Server Component, async operations OK |
-| `layout.tsx` | Nested layouts | Server Component, wraps children |
-| `error.tsx` | Error boundary | Client Component ('use client') |
-| `loading.tsx` | Loading UI | Shown during data fetch |
-| `not-found.tsx` | 404 handler | Server Component |
+| File            | Purpose        | Rules                                     |
+| --------------- | -------------- | ----------------------------------------- |
+| `page.tsx`      | Route page     | Use Server Component, async operations OK |
+| `layout.tsx`    | Nested layouts | Server Component, wraps children          |
+| `error.tsx`     | Error boundary | Client Component ('use client')           |
+| `loading.tsx`   | Loading UI     | Shown during data fetch                   |
+| `not-found.tsx` | 404 handler    | Server Component                          |
 
 ### Dynamic Routes
 
@@ -214,7 +223,7 @@ export default async function CategoryPage({ params }: { params: { category: str
 ```typescript
 // src/app/api/posts/route.ts
 import { NextRequest, NextResponse } from 'next/server'
-export const revalidate = 3600  // ISR: 1 hour
+export const revalidate = 3600 // ISR: 1 hour
 
 export async function GET(request: NextRequest) {
   try {
@@ -229,6 +238,7 @@ export async function GET(request: NextRequest) {
 ```
 
 **REQUIRED**:
+
 - Use `NextRequest` and `NextResponse` types
 - Always wrap in try/catch
 - Set `export const revalidate = 3600` for ISR
@@ -245,12 +255,14 @@ export async function GET(request: NextRequest) {
 **When**: User wants to display a new field from Notion (e.g., author, reading-time, featured-image)
 
 **Files to update** (IN ORDER):
+
 1. `src/lib/types/blog.ts` - Add to `Post` interface
 2. `src/lib/notion/posts.ts` - Add extraction logic (~line 66-72)
 3. `src/components/blog/post-card.tsx` - Display in UI
 4. `src/app/page.tsx` - Use in listing if needed
 
 **Example Checklist**:
+
 ```typescript
 // 1. Type definition
 ✓ Post interface has new field
@@ -296,6 +308,7 @@ export async function GET(request: NextRequest) {
 ```
 
 **MUST-HAVES**:
+
 - ✅ Use `unstable_cache` in utility functions
 - ✅ Error handling with try/catch
 - ✅ `export const revalidate = 3600`
@@ -329,6 +342,7 @@ export function SearchBar() {
 ```
 
 **Key Points**:
+
 - ❌ SearchBar does NOT fetch Notion directly
 - ✅ SearchBar updates URL params
 - ✅ Parent Server Component refetches via searchParams
@@ -381,6 +395,7 @@ import { Post, fetchPosts } from '@/lib/types/blog'
 ### Required TypeScript Checks
 
 **Before committing, ensure**:
+
 ```bash
 npm run typecheck  # No TypeScript errors
 npm run lint       # No ESLint errors
@@ -393,11 +408,11 @@ npm run build      # Production build succeeds
 
 ### Cache Revalidation Tags
 
-| Resource | Cache Key | Revalidate Time | Tag | When to Invalidate |
-|----------|-----------|-----------------|-----|-------------------|
-| Posts | `['posts']` | 3600s (1h) | `['posts']` | New post published |
-| Categories | `['categories']` | 3600s (1h) | `['posts']` | Category added/removed |
-| Single Post | `['post-slug']` | 3600s (1h) | `['posts']` | Post content updated |
+| Resource    | Cache Key        | Revalidate Time | Tag         | When to Invalidate     |
+| ----------- | ---------------- | --------------- | ----------- | ---------------------- |
+| Posts       | `['posts']`      | 3600s (1h)      | `['posts']` | New post published     |
+| Categories  | `['categories']` | 3600s (1h)      | `['posts']` | Category added/removed |
+| Single Post | `['post-slug']`  | 3600s (1h)      | `['posts']` | Post content updated   |
 
 ### Caching Implementation Pattern
 
@@ -454,12 +469,14 @@ export const env = envSchema.parse(process.env)
 ```
 
 **Usage**:
+
 ```typescript
 import { env } from '@/lib/env'
-const databaseId = env.NOTION_DATABASE_ID  // Type-safe
+const databaseId = env.NOTION_DATABASE_ID // Type-safe
 ```
 
 **RULES**:
+
 - ✅ Always validate with Zod in `src/lib/env.ts`
 - ✅ Use `env.VARIABLE_NAME` throughout code
 - ❌ Never use `process.env.VARIABLE` directly
@@ -495,6 +512,7 @@ export function PostCard({ post }: { post: Post }) {
 - Component shadcn/ui classes already optimized (don't modify)
 
 **PROHIBITED**:
+
 - Inline `style={}` attributes
 - Custom CSS files for component styling
 - CSS-in-JS libraries
@@ -580,16 +598,16 @@ New Feature Request
 
 ### ❌ FORBIDDEN in Code
 
-| Action | Reason | What to Do Instead |
-|--------|--------|-------------------|
-| Use `client.databases.query()` outside `src/lib/notion/` | Breaks encapsulation, hard to cache | Create utility in `src/lib/notion/posts.ts` |
-| Direct `process.env` access | Not type-safe, env vars not validated | Use `env` from `src/lib/env.ts` |
-| Async operations in Client Components | React rules violation, hydration mismatch | Use Server Component or call API route |
-| `export default` for non-page components | Inconsistent import patterns | Use named exports, `export function` |
-| Skip TypeScript types | Will fail typecheck | Always add types, use `type` imports |
-| Notion queries without caching | Performance degradation | Wrap in `unstable_cache` with 3600s |
-| Business logic in UI components | Hard to test, mixed concerns | Move to `src/lib/` utilities |
-| Create new component folders haphazardly | Inconsistent organization | Use decision tree from section 2 |
+| Action                                                   | Reason                                    | What to Do Instead                          |
+| -------------------------------------------------------- | ----------------------------------------- | ------------------------------------------- |
+| Use `client.databases.query()` outside `src/lib/notion/` | Breaks encapsulation, hard to cache       | Create utility in `src/lib/notion/posts.ts` |
+| Direct `process.env` access                              | Not type-safe, env vars not validated     | Use `env` from `src/lib/env.ts`             |
+| Async operations in Client Components                    | React rules violation, hydration mismatch | Use Server Component or call API route      |
+| `export default` for non-page components                 | Inconsistent import patterns              | Use named exports, `export function`        |
+| Skip TypeScript types                                    | Will fail typecheck                       | Always add types, use `type` imports        |
+| Notion queries without caching                           | Performance degradation                   | Wrap in `unstable_cache` with 3600s         |
+| Business logic in UI components                          | Hard to test, mixed concerns              | Move to `src/lib/` utilities                |
+| Create new component folders haphazardly                 | Inconsistent organization                 | Use decision tree from section 2            |
 
 ### ❌ FORBIDDEN in File Organization
 
@@ -605,6 +623,7 @@ New Feature Request
 ### Before marking work complete:
 
 **Code Quality**:
+
 - [ ] Run `npm run check-all` - all checks pass
 - [ ] Run `npm run build` - production build succeeds
 - [ ] TypeScript: `npm run typecheck` - no errors
@@ -612,6 +631,7 @@ New Feature Request
 - [ ] Prettier: `npm run format:check` - all formatted
 
 **Feature Implementation**:
+
 - [ ] Types added to `src/lib/types/`
 - [ ] Notion queries cached with `unstable_cache()`
 - [ ] Client/Server components properly separated
@@ -621,6 +641,7 @@ New Feature Request
 - [ ] Components use path aliases (`@/`)
 
 **File Organization**:
+
 - [ ] Component in correct folder (blog/ui/layout/navigation)
 - [ ] File named with kebab-case
 - [ ] Export with PascalCase function name
@@ -628,6 +649,7 @@ New Feature Request
 - [ ] Import statements in correct order: external → internal → relative
 
 **Documentation**:
+
 - [ ] New API endpoints documented in code comments
 - [ ] Complex logic has comments explaining "why", not "what"
 - [ ] No unused imports or variables
@@ -655,6 +677,7 @@ npx shadcn@latest add [component]  # Add shadcn/ui component
 ```
 
 **Git Workflow**:
+
 ```bash
 npm run check-all       # ← Run BEFORE commit
 git add .
@@ -668,34 +691,35 @@ npm run build           # ← Verify build succeeds before push
 
 ### Posts Database Properties (Required)
 
-| Property | Type | Format | Used In |
-|----------|------|--------|---------|
-| Title | Title | Rich text | `post.title`, URL slug |
-| Category | Relation | Reference to Categories DB | `post.category` |
-| Tags | Multi-select | Tag names | `post.tags[]` |
-| Published Date | Date | YYYY-MM-DD | `post.publishedDate` |
-| Excerpt | Rich text | 150 chars max | `post.excerpt` |
-| Status | Status | "Published" / "Draft" | Filter in queries |
-| Created At | Created time | Auto-generated | `post.createdAt` |
-| Updated At | Last edited | Auto-generated | `post.updatedAt` |
+| Property       | Type         | Format                     | Used In                |
+| -------------- | ------------ | -------------------------- | ---------------------- |
+| Title          | Title        | Rich text                  | `post.title`, URL slug |
+| Category       | Relation     | Reference to Categories DB | `post.category`        |
+| Tags           | Multi-select | Tag names                  | `post.tags[]`          |
+| Published Date | Date         | YYYY-MM-DD                 | `post.publishedDate`   |
+| Excerpt        | Rich text    | 150 chars max              | `post.excerpt`         |
+| Status         | Status       | "Published" / "Draft"      | Filter in queries      |
+| Created At     | Created time | Auto-generated             | `post.createdAt`       |
+| Updated At     | Last edited  | Auto-generated             | `post.updatedAt`       |
 
 ### When Adding New Properties
 
 Example: Adding "Author" field
+
 ```typescript
 // 1. Update Notion schema: Add "Author" property (Rich text type)
 
 // 2. Update src/lib/types/blog.ts
 export interface Post {
   // ... existing
-  author?: string  // NEW
+  author?: string // NEW
 }
 
 // 3. Update src/lib/notion/posts.ts (~line 67-72)
-const author = extractText(props.Author?.rich_text || [])  // NEW
+const author = extractText(props.Author?.rich_text || []) // NEW
 return {
   // ... existing
-  author,  // NEW
+  author, // NEW
 }
 
 // 4. Use in components: post.author
@@ -718,7 +742,9 @@ const client = getNotionClient()
 async function fetchPostsUncached(category?: string): Promise<Post[]> {
   const response = await client.databases.query({
     database_id: env.NOTION_DATABASE_ID,
-    filter: { /* ... */ },
+    filter: {
+      /* ... */
+    },
     sorts: [{ property: 'Published Date', direction: 'descending' }],
   })
 
@@ -794,14 +820,14 @@ export function SearchBar() {
 
 ### Common Issues & Solutions
 
-| Issue | Cause | Solution |
-|-------|-------|----------|
-| Build fails: "Module not found" | Wrong import path or alias | Use `@/` aliases, check tsconfig.json |
-| Notion query returns empty | Database ID wrong or posts not published | Check `NOTION_DATABASE_ID` in `.env.local`, verify Status = "Published" |
-| Component doesn't update after Notion change | Cache not revalidated | Manual revalidation or wait 3600s (1 hour) |
-| "Cannot use async in Client Component" | Async in 'use client' component | Move async logic to Server Component or API route |
-| Types missing errors | Component file doesn't import types | Add `import type { Post } from '@/lib/types/blog'` |
-| Tailwind classes not applied | Prettier didn't sort classes | Run `npm run format` |
+| Issue                                        | Cause                                    | Solution                                                                |
+| -------------------------------------------- | ---------------------------------------- | ----------------------------------------------------------------------- |
+| Build fails: "Module not found"              | Wrong import path or alias               | Use `@/` aliases, check tsconfig.json                                   |
+| Notion query returns empty                   | Database ID wrong or posts not published | Check `NOTION_DATABASE_ID` in `.env.local`, verify Status = "Published" |
+| Component doesn't update after Notion change | Cache not revalidated                    | Manual revalidation or wait 3600s (1 hour)                              |
+| "Cannot use async in Client Component"       | Async in 'use client' component          | Move async logic to Server Component or API route                       |
+| Types missing errors                         | Component file doesn't import types      | Add `import type { Post } from '@/lib/types/blog'`                      |
+| Tailwind classes not applied                 | Prettier didn't sort classes             | Run `npm run format`                                                    |
 
 ---
 
@@ -822,20 +848,20 @@ When reviewing code changes, ensure:
 
 ## 20. Summary: Essential Rules for AI
 
-| Rule | Enforce | Example |
-|------|---------|---------|
-| **All Notion queries cached** | 🔴 STRICT | `unstable_cache(..., { revalidate: 3600 })` |
-| **Server-first components** | 🔴 STRICT | Default Server, use `'use client'` only for interactivity |
-| **Types in lib/types/** | 🔴 STRICT | `src/lib/types/blog.ts` defines Post interface |
-| **Path aliases @/** | 🔴 STRICT | `import { Button } from '@/components/ui/button'` |
-| **kebab-case files** | 🔴 STRICT | `post-card.tsx`, not `PostCard.tsx` |
-| **PascalCase components** | 🔴 STRICT | `export function PostCard()` |
-| **Notion logic in lib/** | 🔴 STRICT | Client → API → `lib/notion/` → Notion |
-| **Multi-file awareness** | 🔴 STRICT | New property = update type + extraction + component |
-| **TypeScript validation** | 🔴 STRICT | `npm run typecheck` must pass |
-| **Component < 300 lines** | 🟡 IMPORTANT | Refactor if exceeds limit |
-| **Code comments "why"** | 🟡 IMPORTANT | Explain intent, not obvious code |
-| **Error handling try/catch** | 🟡 IMPORTANT | API routes must catch errors |
+| Rule                          | Enforce      | Example                                                   |
+| ----------------------------- | ------------ | --------------------------------------------------------- |
+| **All Notion queries cached** | 🔴 STRICT    | `unstable_cache(..., { revalidate: 3600 })`               |
+| **Server-first components**   | 🔴 STRICT    | Default Server, use `'use client'` only for interactivity |
+| **Types in lib/types/**       | 🔴 STRICT    | `src/lib/types/blog.ts` defines Post interface            |
+| **Path aliases @/**           | 🔴 STRICT    | `import { Button } from '@/components/ui/button'`         |
+| **kebab-case files**          | 🔴 STRICT    | `post-card.tsx`, not `PostCard.tsx`                       |
+| **PascalCase components**     | 🔴 STRICT    | `export function PostCard()`                              |
+| **Notion logic in lib/**      | 🔴 STRICT    | Client → API → `lib/notion/` → Notion                     |
+| **Multi-file awareness**      | 🔴 STRICT    | New property = update type + extraction + component       |
+| **TypeScript validation**     | 🔴 STRICT    | `npm run typecheck` must pass                             |
+| **Component < 300 lines**     | 🟡 IMPORTANT | Refactor if exceeds limit                                 |
+| **Code comments "why"**       | 🟡 IMPORTANT | Explain intent, not obvious code                          |
+| **Error handling try/catch**  | 🟡 IMPORTANT | API routes must catch errors                              |
 
 ---
 

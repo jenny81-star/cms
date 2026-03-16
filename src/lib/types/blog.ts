@@ -19,6 +19,7 @@ export interface Post {
 }
 
 export interface Category {
+  id?: string
   name: string
   slug: string
   postCount: number

@@ -1,6 +1,6 @@
 'use client'
 
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useRouter, useSearchParams, usePathname } from 'next/navigation'
 import { useCallback, useTransition } from 'react'
 import { Search, X } from 'lucide-react'
 import { Input } from '@/components/ui/input'
@@ -12,6 +12,7 @@ import { Button } from '@/components/ui/button'
 export function SearchBar() {
   const router = useRouter()
   const searchParams = useSearchParams()
+  const pathname = usePathname()
   const [isPending, startTransition] = useTransition()
 
   const query = searchParams.get('search') || ''
@@ -28,10 +29,10 @@ export function SearchBar() {
           params.delete('search')
         }
 
-        router.push(`/?${params.toString()}`)
+        router.push(`${pathname}?${params.toString()}`)
       })
     },
-    [router, searchParams]
+    [router, pathname, searchParams]
   )
 
   const handleClear = () => {

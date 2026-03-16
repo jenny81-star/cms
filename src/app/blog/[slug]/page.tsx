@@ -93,7 +93,9 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
               <div className="text-muted-foreground flex flex-wrap items-center gap-4 text-sm">
                 <time dateTime={post.publishedDate}>
-                  {formatDate(new Date(post.publishedDate), 'MMMM dd, yyyy')}
+                  {post.publishedDate
+                    ? formatDate(new Date(post.publishedDate), 'MMMM dd, yyyy')
+                    : '날짜 미정'}
                 </time>
                 {post.category && (
                   <Badge variant="outline">{post.category}</Badge>

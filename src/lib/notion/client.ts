@@ -8,8 +8,13 @@ let notionClient: Client | null = null
 
 export function getNotionClient(): Client {
   if (!notionClient) {
-    // Use a dummy key during build if not configured
-    const apiKey = env.NOTION_API_KEY || 'dummy_key_for_build'
+    const apiKey = env.NOTION_API_KEY
+
+    if (!apiKey) {
+      throw new Error(
+        'NOTION_API_KEY is not configured. Please set it in .env.local'
+      )
+    }
 
     notionClient = new Client({
       auth: apiKey,

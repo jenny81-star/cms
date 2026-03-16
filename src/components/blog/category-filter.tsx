@@ -40,7 +40,7 @@ export function CategoryFilter({ categories }: CategoryFilterProps) {
       </Button>
       {categories.map(category => (
         <Button
-          key={category.slug}
+          key={category.slug || category.id}
           variant={activeCategory === category.slug ? 'default' : 'outline'}
           onClick={() => handleCategoryClick(category.slug)}
           className="relative"
