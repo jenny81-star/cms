@@ -52,7 +52,7 @@ export async function verifySessionToken(
 
   try {
     const verified = await jwtVerify(token, secretKey)
-    const payload = verified.payload as SessionPayload
+    const payload = verified.payload as unknown as SessionPayload
 
     return {
       username: payload.username,

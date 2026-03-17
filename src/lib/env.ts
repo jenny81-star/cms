@@ -11,7 +11,13 @@ const envSchema = z.object({
   NEXT_PUBLIC_SITE_URL: z.string().url().optional(),
   // Admin Authentication
   ADMIN_USERNAME: z.string().min(1),
-  ADMIN_PASSWORD_HASH: z.string().startsWith('$2b$').optional().default(''),
+  ADMIN_PASSWORD_HASH: z
+    .string()
+    .optional()
+    .default('')
+    .refine(val => val === '' || val.startsWith('$2b$'), {
+      message: 'Invalid string: must start with "$2b$"',
+    }),
   ADMIN_SESSION_SECRET: z.string().min(32),
 })
 
