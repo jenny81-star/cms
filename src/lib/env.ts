@@ -9,6 +9,10 @@ const envSchema = z.object({
   NOTION_API_KEY: z.string().min(1).optional(),
   NOTION_DATABASE_ID: z.string().min(1).optional(),
   NEXT_PUBLIC_SITE_URL: z.string().url().optional(),
+  // Admin Authentication
+  ADMIN_USERNAME: z.string().min(1),
+  ADMIN_PASSWORD_HASH: z.string().startsWith('$2b$').optional().default(''),
+  ADMIN_SESSION_SECRET: z.string().min(32),
 })
 
 export const env = envSchema.parse({
@@ -18,6 +22,9 @@ export const env = envSchema.parse({
   NOTION_API_KEY: process.env.NOTION_API_KEY,
   NOTION_DATABASE_ID: process.env.NOTION_DATABASE_ID,
   NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL,
+  ADMIN_USERNAME: process.env.ADMIN_USERNAME,
+  ADMIN_PASSWORD_HASH: process.env.ADMIN_PASSWORD_HASH,
+  ADMIN_SESSION_SECRET: process.env.ADMIN_SESSION_SECRET,
 })
 
 export type Env = z.infer<typeof envSchema>
