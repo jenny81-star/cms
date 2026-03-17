@@ -3,7 +3,7 @@
  * Usage: npx tsx scripts/generate-hash.ts
  */
 
-import bcrypt from 'bcryptjs'
+import bcryptjs from 'bcryptjs'
 
 async function generateHash() {
   // Default password for development
@@ -13,7 +13,7 @@ async function generateHash() {
   console.log(`입력한 비밀번호: ${password}\n`)
 
   try {
-    const hash = await bcrypt.hash(password, 10)
+    const hash = await bcryptjs.hash(password, 10)
 
     console.log('✅ 해시 생성 완료!\n')
     console.log('다음을 .env.local 파일에 추가하세요:\n')

@@ -3,7 +3,7 @@
  * Note: This module uses bcrypt which is Node.js only and cannot be used in Edge Runtime
  */
 
-import bcrypt from 'bcryptjs'
+import bcryptjs from 'bcryptjs'
 
 const SALT_ROUNDS = 10
 
@@ -13,7 +13,7 @@ const SALT_ROUNDS = 10
  * @returns Promise<string> - Hashed password
  */
 export async function hashPassword(password: string): Promise<string> {
-  return bcrypt.hash(password, SALT_ROUNDS)
+  return bcryptjs.hash(password, SALT_ROUNDS)
 }
 
 /**
@@ -26,5 +26,5 @@ export async function verifyPassword(
   password: string,
   hash: string
 ): Promise<boolean> {
-  return bcrypt.compare(password, hash)
+  return bcryptjs.compare(password, hash)
 }
